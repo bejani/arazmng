@@ -1,0 +1,203 @@
+/* =========================
+   Admin Theme — Dark Green
+   ========================= */
+:root{
+  /* پالت سبز تیره */
+  --admin-green-800: #0a3d2b;
+  --admin-green-750: #0d4633;
+  --admin-green-700: #0f5132; /* نزدیک به Bootstrap success-700 */
+  --admin-green-600: #146c43;
+  --admin-green-500: #198754;
+
+  --admin-fg: #ffffff;
+  --admin-fg-soft: #e6fff4;
+
+  /* خاکستری‌های کمکی */
+  --slate-500: #64748b;
+  --border-soft: #e5e7eb;
+}
+
+/* کانتینر و برند */
+.app-container{ max-width:1200px; }
+.brand{ font-weight:700; }
+
+/* ===== Navbar (Header) ===== */
+.navbar.admin-navbar{
+  background: linear-gradient(135deg, var(--admin-green-800), var(--admin-green-600)) !important;
+}
+.navbar.admin-navbar .navbar-brand,
+.navbar.admin-navbar .nav-link,
+.navbar.admin-navbar .navbar-toggler{
+  color: var(--admin-fg) !important;
+}
+.navbar.admin-navbar .nav-link:hover,
+.navbar.admin-navbar .nav-link:focus,
+.navbar.admin-navbar .nav-link.active{
+  color: var(--admin-fg-soft) !important;
+  text-shadow: 0 0 1px rgba(0,0,0,.25);
+}
+.navbar.admin-navbar .btn-outline-light{
+  border-color: rgba(255,255,255,.7);
+  color:#fff;
+}
+.navbar.admin-navbar .btn-outline-light:hover{
+  background: rgba(255,255,255,.12);
+}
+
+/* پس‌زمینه‌ی کلی و کارت‌ها */
+body{ background:#f6f9f7; }
+.card-elevated{
+  border-radius:16px;
+  box-shadow:0 10px 24px rgba(2,6,23,.06);
+  border:1px solid #eef2f7;
+  background:#fff;
+}
+
+/* ===== جدول مدرن + نسخه کارت در موبایل ===== */
+.table-modern{ font-size:.95rem; }
+.table-modern thead th{
+  white-space:nowrap;
+  background: linear-gradient(135deg, var(--admin-green-700), var(--admin-green-600));
+  color:#fff; border:0;
+}
+.table-modern tbody tr{ transition: transform .08s ease, box-shadow .08s ease; }
+.table-modern tbody tr:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(2,6,23,.06);
+}
+
+@media (max-width:768px){
+  .table-modern{ border-collapse:separate; border-spacing:0 .75rem; }
+  .table-modern thead{ display:none; }
+  .table-modern tbody tr{
+    display:block; background:#fff;
+    border:1px solid var(--border-soft);
+    border-radius:16px; box-shadow:0 8px 20px rgba(2,6,23,.06);
+    padding:.6rem .75rem; margin:.35rem 0;
+  }
+  .table-modern tbody td{
+    display:flex; justify-content:space-between; align-items:center;
+    border:0; padding:.35rem .25rem;
+  }
+  .table-modern tbody td::before{
+    content: attr(data-label);
+    font-weight:600; color:var(--slate-500);
+    margin-left:1rem;
+  }
+  .table-actions{ display:flex; flex-wrap:wrap; gap:.35rem; justify-content:flex-end; }
+}
+
+/* چیپ‌های وضعیت/برچسب */
+.chip{
+  display:inline-flex; align-items:center; gap:.35rem;
+  border-radius:999px; padding:.15rem .5rem;
+  font-size:.8rem; font-weight:600;
+}
+.chip-paid    { background:#e6f9ed; color:#137a2a; border:1px solid #c6f0d1; }
+.chip-partial { background:#fff7e6; color:#8a5a00; border:1px solid #ffe8b3; }
+.chip-unpaid  { background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; }
+
+/* گفت‌وگو در صفحه تیکت */
+.thread{ display:flex; flex-direction:column; gap:.5rem; }
+.msg{ border:1px solid #e5e7eb; border-radius:12px; padding:.6rem .75rem; }
+.msg--admin{ background:#f8fafc; }
+.msg .meta{ font-size:.8rem; color:var(--slate-500); margin-bottom:.25rem; }
+
+/* دکمه‌ها (هماهنگ با سبز تیره) */
+.btn-primary{
+  background-color: var(--admin-green-700);
+  border-color: var(--admin-green-700);
+}
+.btn-primary:hover, .btn-primary:focus{
+  background-color: var(--admin-green-600);
+  border-color: var(--admin-green-600);
+}
+.btn-outline-success{
+  color: var(--admin-green-600);
+  border-color: var(--admin-green-600);
+}
+.btn-outline-success:hover{
+  background: var(--admin-green-600);
+  color:#fff;
+}
+
+/* جمع‌وجوری دکمه‌ها در موبایل */
+@media (max-width:768px){
+  .btn-group-wrap{ display:flex; flex-wrap:wrap; gap:.5rem; }
+}
+
+/* ===== Jalali Datepicker (استایل) ===== */
+.jdp-panel{
+  position:absolute; z-index:1055; width:296px;
+  background:#fff; border:1px solid #dcdcdc; border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  overflow:hidden; direction:rtl; font-family:inherit;
+}
+.jdp-header{
+  display:flex; align-items:center; justify-content:space-between;
+  background: linear-gradient(135deg, var(--admin-green-600), var(--admin-green-700));
+  color:#fff; padding:.6rem .8rem;
+}
+.jdp-title{ font-weight:700; }
+.jdp-nav{ display:flex; gap:.35rem; }
+.jdp-nav button{
+  border:0; background:rgba(255,255,255,.2); color:#fff;
+  border-radius:8px; padding:.35rem .55rem; cursor:pointer;
+}
+.jdp-nav button:hover{ background:rgba(255,255,255,.3); }
+.jdp-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px; padding:.6rem; }
+.jdp-cell{ padding:.45rem 0; text-align:center; border-radius:8px; cursor:pointer; user-select:none; font-weight:600; }
+.jdp-cell.mono{ font-weight:400; opacity:.6; cursor:default; }
+.jdp-cell.h{ font-weight:700; opacity:.75; cursor:default; }
+.jdp-cell.d:hover{ background:#f1f5f9; }
+.jdp-cell.sel{ background:#e0f2e9; }
+.jdp-foot{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.5rem .65rem; border-top:1px dashed #eee; background:#fafafa;
+}
+.jdp-today{
+  border:0; background: var(--admin-green-600);
+  color:#fff; border-radius:8px; padding:.35rem .6rem; font-weight:700;
+}
+.jdp-close{
+  border:0; background:#e5e7eb; color:#111827; border-radius:8px; padding:.35rem .6rem; font-weight:600;
+}
+.jdp-hide{ display:none; }
+
+/* ===== Dashboard Cards (Admin) ===== */
+.card-admin{
+  border:1px solid #e4efe9;
+  border-radius:16px;
+  background:#fff;
+  box-shadow: 0 8px 22px rgba(2,6,23,.06);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.card-admin:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(2,6,23,.09);
+}
+.card-admin .card-title{ font-weight:800; }
+.card-admin .muted{ color:#607d75 !important; }
+
+/* Icon (no background) */
+.card-admin__icon{
+  font-size: 28px;
+  line-height: 1;
+  color: var(--admin-green-700);
+  display: inline-block;
+}
+
+
+/* دکمه‌های کارت */
+.card-admin .btn{ border-radius:10px; }
+
+/* Outline Primary هم‌رنگ سبز تیره */
+.btn-outline-primary{
+  color: var(--admin-green-600);
+  border-color: var(--admin-green-600);
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus{
+  background: var(--admin-green-600);
+  border-color: var(--admin-green-600);
+  color:#fff;
+}

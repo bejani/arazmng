@@ -1,0 +1,173 @@
+/* =========================
+   Portal Theme — Teal Only
+   ========================= */
+:root{
+  --safe-pad: .75rem;
+
+  /* Teal palette */
+  --teal-800: #085e6b;
+  --teal-700: #0b7285; /* آبی نفتی/تیل اصلی */
+  --teal-600: #0f766e;
+  --teal-500: #1191a2;
+
+  /* brand hooks */
+  --brand: var(--teal-700);
+  --brand-2: var(--teal-600); /* برای شیبِ هم‌رنگ */
+  --ok: var(--teal-600);
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --brand-fg: #ffffff;
+  --brand-fg-soft: #eafffb;
+}
+
+/* Containers */
+.app-container{ max-width:1100px; }
+.brand{ font-weight:700; }
+.nav-link.active{ font-weight:700; }
+
+/* ===== Navbar (Header) ===== */
+.navbar.app-navbar{
+  /* تک‌رنگ تیلی */
+  background: var(--teal-700) !important;
+}
+.navbar.app-navbar .navbar-brand,
+.navbar.app-navbar .nav-link,
+.navbar.app-navbar .navbar-toggler{
+  color: var(--brand-fg) !important;
+}
+.navbar.app-navbar .nav-link:hover,
+.navbar.app-navbar .nav-link:focus,
+.navbar.app-navbar .nav-link.active{
+  color: var(--brand-fg-soft) !important;
+  text-shadow: 0 0 1px rgba(0,0,0,.25);
+}
+.navbar.app-navbar .dropdown-menu{
+  border-color: rgba(0,0,0,.08);
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+}
+
+/* ===== Page padding for bottom tab on mobile ===== */
+.content-pad{ padding-bottom:64px; }
+
+/* ===== Flash messages auto dismiss ===== */
+.auto-dismiss{ transition: opacity .6s ease; }
+
+/* ===== Cards ===== */
+.card-elevated{
+  border:0; border-radius:1rem;
+  box-shadow: 0 10px 25px rgba(2,6,23,.06);
+}
+.card-elevated .card-title{ font-weight:800; }
+
+/* ===== Stat cards ===== */
+.stat-card{
+  display:flex; align-items:center; gap:.75rem;
+  padding:1rem; border-radius:1rem;
+  background: linear-gradient(180deg, #f8fafc, #ffffff);
+  border:1px solid #eef2f7;
+  box-shadow: 0 6px 18px rgba(2,6,23,.04);
+}
+.stat-emoji{
+  width:44px; height:44px; display:grid; place-items:center;
+  border-radius:12px; color:#fff; font-size:22px;
+  /* گرادیان هم‌رنگ (دو طیف تیلی) */
+  background: linear-gradient(135deg, var(--teal-700), var(--teal-600));
+}
+.stat-caption{ color:#6b7280; font-size:.9rem; }
+.stat-value{ font-weight:800; font-size:1.15rem; }
+
+/* ===== Invoice status chips (هم‌رنگ تیلی) ===== */
+.chip{
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.35rem .6rem; border-radius:999px;
+  font-weight:600; font-size:.82rem;
+}
+.chip-paid{
+  background: rgba(11,114,133,.10);
+  color: var(--teal-800);
+}
+.chip-partial{
+  background: rgba(11,114,133,.07);
+  color: var(--teal-700);
+}
+.chip-unpaid{
+  background: rgba(11,114,133,.05);
+  color: var(--teal-700);
+}
+
+/* ===== Modern table header + hover ===== */
+.table-modern thead th{
+  /* شیب تیلی-تیلی */
+  background: linear-gradient(135deg, var(--teal-700), var(--teal-600));
+  color:#fff; border:0;
+}
+.table-modern tbody tr{ transition: transform .08s ease, box-shadow .08s ease; }
+.table-modern tbody tr:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(2,6,23,.06);
+}
+
+/* Money cues (تیلی) */
+.money-pos{ color: var(--teal-600) !important; font-weight:700; }
+.money-neg{ color: var(--teal-700) !important; font-weight:700; }
+
+/* ===== Responsive table as cards (mobile) ===== */
+@media (max-width: 576px){
+  table.responsive-cards{ border:0; }
+  table.responsive-cards thead{ display:none; }
+  table.responsive-cards tr{
+    display:block; margin-bottom:.8rem;
+    border:1px solid #e6eef0; border-radius:.9rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04); overflow:hidden;
+  }
+  table.responsive-cards td{
+    display:grid; grid-template-columns:42% 58%;
+    padding:.6rem .8rem; border:0 !important;
+    border-bottom:1px dashed #edf3f4 !important;
+  }
+  table.responsive-cards td:last-child{ border-bottom:0 !important; }
+  table.responsive-cards td::before{
+    content: attr(data-label);
+    font-weight:700; color:#577c83;
+  }
+  .table-actions{ display:flex; gap:.4rem; flex-wrap:wrap; }
+}
+
+/* ===== Bottom Tab (mobile) ===== */
+.bottom-tab{
+  position: sticky; bottom:0; left:0; right:0;
+  background:#fff; border-top:1px solid #e5e7eb;
+  box-shadow: 0 -6px 18px rgba(2,6,23,.06);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index:1030;
+}
+.bottom-tab .btn.btn-link{
+  display:flex; flex-direction:column; align-items:center; gap:.15rem;
+  text-decoration:none; color:#374151; min-width:56px;
+}
+.bottom-tab .btn.btn-link.active,
+.bottom-tab .btn.btn-link:hover{
+  color: var(--teal-700);
+}
+.bottom-tab .badge{ transform: translateY(-6px); }
+
+/* ===== Subtle page background ===== */
+body{ background:#ffffff; }
+
+/* ===== Buttons (اختیاری برای صفحات پورتال) ===== */
+.btn-primary{
+  background-color: var(--teal-700);
+  border-color: var(--teal-700);
+}
+.btn-primary:hover, .btn-primary:focus{
+  background-color: var(--teal-600);
+  border-color: var(--teal-600);
+}
+.btn-outline-primary{
+  color: var(--teal-700);
+  border-color: var(--teal-700);
+}
+.btn-outline-primary:hover{
+  background: var(--teal-700);
+  color:#fff;
+}

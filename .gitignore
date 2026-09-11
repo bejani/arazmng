@@ -1,0 +1,7 @@
+.env
+vendor/
+node_modules/
+*.log
+res/
+DB Backup/
+
