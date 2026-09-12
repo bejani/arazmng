@@ -1,12 +1,6 @@
 <?php
-$host = "localhost";
-$dbname = "zilbirir_users";
-$username = "zilbirir_admin";
-$password = "rwm[F!7GdE#AdO{J";
+declare(strict_types=1);
 
-$conn = new mysqli($host, $username, $password, $dbname);
- 
- if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
-$conn->set_charset('utf8mb4');
+// Backward-compatible alias for legacy includes. New code should include db.php directly.
+require_once __DIR__ . '/db.php';
+$conn = $pdo;

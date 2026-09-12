@@ -1,11 +1,18 @@
 <?php
 class HomeController {
     public function index($pdo) {
-        // تعداد رکوردها برای نمایش در داشبورد
-        $units = $pdo->query("SELECT COUNT(*) AS c FROM units")->fetch()['c'];
-        $residents = $pdo->query("SELECT COUNT(*) AS c FROM residents")->fetch()['c'];
-        $invoices = $pdo->query("SELECT COUNT(*) AS c FROM invoices")->fetch()['c'];
-        $payments = $pdo->query("SELECT COUNT(*) AS c FROM payments")->fetch()['c'];
+        // تعداد رکوردها برای نمایش در داشبورد؛ یک round-trip به جای چهار query جدا.
+        $counts = $pdo->query(
+            "SELECT
+                (SELECT COUNT(*) FROM units) AS units,
+                (SELECT COUNT(*) FROM residents) AS residents,
+                (SELECT COUNT(*) FROM invoices) AS invoices,
+                (SELECT COUNT(*) FROM payments) AS payments"
+        )->fetch();
+        $units = (int)($counts['units'] ?? 0);
+        $residents = (int)($counts['residents'] ?? 0);
+        $invoices = (int)($counts['invoices'] ?? 0);
+        $payments = (int)($counts['payments'] ?? 0);
 
         include __DIR__."/../views/home.php";
     }

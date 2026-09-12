@@ -36,10 +36,9 @@ final class AdminController
         $ok = false;
         if ($hash !== '') {
             $ok = password_verify($pwd, $hash);
-        } else {
-            // fallback نهایی: plain از فایل/ENV؛ اگر خالی بود، پیش‌فرض امن‌تر از قبلی
-            $expected = $plain !== '' ? $plain : 'changeme123';
-            $ok = hash_equals($expected, $pwd);
+        } elseif ($plain !== '') {
+            // Plain-text fallback is retained only for local legacy deployments.
+            $ok = hash_equals($plain, $pwd);
         }
     
         if ($ok) {
@@ -53,7 +52,7 @@ final class AdminController
     }
         public function logout(): void {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        unset($_SESSION['is_admin']);
+        unset($_SESSION['is_admin'], $_SESSION['admin_last_activity']);
         $_SESSION['ok'] = 'خروج ادمین انجام شد.';
         header('Location: index.php?page=home'); exit;
     }

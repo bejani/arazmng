@@ -42,6 +42,7 @@ class ResidentPortalController
 
         $_SESSION['portal_resident_id']   = (int)$row['id'];
         $_SESSION['portal_resident_name'] = $row['full_name'] ?? '';
+        session_regenerate_id(true);
 
         if ($this->hasColumn('residents', 'portal_last_login')) {
             $st = $this->pdo->prepare("UPDATE residents SET portal_last_login = NOW() WHERE id=:id");

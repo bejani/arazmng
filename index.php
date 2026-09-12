@@ -3,10 +3,19 @@
 // نکته: داشبورد/کارت‌ها داخل home.php هستند
 declare(strict_types=1);
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    session_set_cookie_params([
+        'httponly' => true,
+        'secure'   => $isHttps,
+        'samesite' => 'Lax',
+    ]);
+    session_start();
+}
 
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
+$isDevelopment = filter_var(getenv('APP_DEBUG') ?: '0', FILTER_VALIDATE_BOOL);
+ini_set('display_errors', $isDevelopment ? '1' : '0');
+error_reporting($isDevelopment ? E_ALL : 0);
 
 // --- DB ---
 require_once __DIR__ . '/db.php';
