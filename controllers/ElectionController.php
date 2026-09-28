@@ -195,7 +195,7 @@ final class ElectionController
         $auditorId = (int)($_POST['auditor_candidate_id'] ?? 0);
         $election = $this->findElection($eid);
         if (!$election || $election['status'] !== 'open') $this->redirect('portal_election', 'این رأی‌گیری فعال نیست.', true);
-        if (count($candidateIds) !== 3) $this->redirect('portal_election', 'برای هیئت امنا باید دقیقاً ۳ کاندیدا انتخاب کنید.', true);
+        if (count($candidateIds) > 3) $this->redirect('portal_election', 'برای هیئت امنا حداکثر ۳ کاندیدا انتخاب کنید.', true);
         if ($auditorId <= 0) $this->redirect('portal_election', 'لطفاً یک بازرس انتخاب کنید.', true);
         $allIds = array_values(array_unique(array_merge($candidateIds, [$auditorId])));
         $marks = implode(',', array_fill(0, count($allIds), '?'));
