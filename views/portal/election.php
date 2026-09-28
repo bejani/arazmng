@@ -1,5 +1,5 @@
 <?php require_once __DIR__ . '/../_helpers.php'; ?>
-<div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="mb-1">انتخابات هیئت امنا</h2><p class="text-muted mb-0">حداقل ۳ نفر برای هیئت امنا و ۱ نفر برای بازرس انتخاب کنید.</p></div></div>
+<div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="mb-1">انتخابات هیئت امنا</h2><p class="text-muted mb-0">دقیقاً ۳ نفر برای هیئت امنا و ۱ نفر برای بازرس انتخاب کنید.</p></div></div>
 <?php if (!empty($_SESSION['ok'])): ?><div class="alert alert-success"><?= h($_SESSION['ok']); unset($_SESSION['ok']); ?></div><?php endif; ?>
 <?php if (!empty($_SESSION['error'])): ?><div class="alert alert-danger"><?= h($_SESSION['error']); unset($_SESSION['error']); ?></div><?php endif; ?>
 <?php if (!$election): ?>
@@ -9,9 +9,9 @@
     <?php if ($canVote): ?>
         <form method="post" action="index.php?page=portal_election_vote" id="electionForm">
             <?= csrf_field() ?><input type="hidden" name="election_id" value="<?= (int)$election['id'] ?>">
-            <div class="card shadow-sm mb-4"><div class="card-header fw-bold">انتخاب اعضای هیئت امنا <span class="text-muted small">(حداقل ۳ نفر)</span></div><div class="card-body"><div class="row g-3">
+            <div class="card shadow-sm mb-4"><div class="card-header fw-bold">انتخاب اعضای هیئت امنا <span class="text-muted small">(دقیقاً ۳ نفر)</span></div><div class="card-body"><div class="row g-3">
                 <?php foreach ($candidates as $c): if (($c['candidate_role'] ?? 'trustee') !== 'trustee') continue; ?><div class="col-md-6"><label class="card h-100 shadow-sm candidate-card"><div class="card-body d-flex gap-3"><input class="form-check-input mt-2 trustee-choice" type="checkbox" name="candidate_ids[]" value="<?= (int)$c['id'] ?>"><?php if ($c['photo_url']): ?><img src="<?= h($c['photo_url']) ?>" alt="تصویر <?= h($c['full_name']) ?>" style="width:72px;height:72px;object-fit:cover;border-radius:50%"><?php endif; ?><div><h5><?= h($c['full_name']) ?></h5><?php if ($c['bio']): ?><p class="text-muted small mb-0" style="white-space:pre-wrap"><?= nl2br(h($c['bio'])) ?></p><?php endif; ?></div></div></label></div><?php endforeach; ?>
-            </div><div class="small text-primary mt-3" id="trusteeCount">تعداد انتخاب‌شده: ۰ نفر</div></div></div>
+            </div><div class="small text-primary mt-3" id="trusteeCount">تعداد انتخاب‌شده: ۰ نفر از ۳ نفر</div></div></div>
             <div class="card shadow-sm mb-4"><div class="card-header fw-bold">انتخاب بازرس <span class="text-muted small">(دقیقاً ۱ نفر)</span></div><div class="card-body"><div class="row g-3">
                 <?php foreach ($candidates as $c): if (($c['candidate_role'] ?? 'trustee') !== 'auditor') continue; ?><div class="col-md-6"><label class="card h-100 shadow-sm candidate-card"><div class="card-body d-flex gap-3"><input class="form-check-input mt-2" type="radio" name="auditor_candidate_id" value="<?= (int)$c['id'] ?>" required><?php if ($c['photo_url']): ?><img src="<?= h($c['photo_url']) ?>" alt="تصویر <?= h($c['full_name']) ?>" style="width:72px;height:72px;object-fit:cover;border-radius:50%"><?php endif; ?><div><h5><?= h($c['full_name']) ?></h5><?php if ($c['bio']): ?><p class="text-muted small mb-0" style="white-space:pre-wrap"><?= nl2br(h($c['bio'])) ?></p><?php endif; ?></div></div></label></div><?php endforeach; ?>
             </div></div></div>
@@ -26,4 +26,4 @@
     <?php else: ?><div class="alert alert-secondary">رأی‌گیری پایان یافته است؛ نتیجه پس از تأیید ادمین نمایش داده خواهد شد.</div><?php endif; ?>
 <?php endif; ?>
 <style>.candidate-card{cursor:pointer;transition:.15s}.candidate-card:hover{border-color:#0d6efd;transform:translateY(-2px)}.candidate-card:has(input:checked){border:2px solid #0d6efd;background:#f0f7ff}</style>
-<script>document.querySelectorAll('.trustee-choice').forEach(function (el) { el.addEventListener('change', function () { var n = document.querySelectorAll('.trustee-choice:checked').length; document.getElementById('trusteeCount').textContent = 'تعداد انتخاب‌شده: ' + n + ' نفر'; }); }); document.getElementById('electionForm')?.addEventListener('submit', function (e) { if (document.querySelectorAll('.trustee-choice:checked').length < 3) { e.preventDefault(); alert('حداقل ۳ نفر برای هیئت امنا انتخاب کنید.'); } });</script>
+<script>document.querySelectorAll('.trustee-choice').forEach(function (el) { el.addEventListener('change', function () { var n = document.querySelectorAll('.trustee-choice:checked').length; document.getElementById('trusteeCount').textContent = 'تعداد انتخاب‌شده: ' + n + ' نفر از ۳ نفر'; }); }); document.getElementById('electionForm')?.addEventListener('submit', function (e) { if (document.querySelectorAll('.trustee-choice:checked').length !== 3) { e.preventDefault(); alert('دقیقاً ۳ نفر برای هیئت امنا انتخاب کنید.'); } });</script>
