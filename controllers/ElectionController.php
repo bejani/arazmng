@@ -39,6 +39,32 @@ final class ElectionController
         return $ts === false ? null : date('Y-m-d H:i:s', $ts);
     }
 
+    private function saveCandidatePhoto(): ?string
+    {
+        if (empty($_FILES['photo']) || ($_FILES['photo']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) return null;
+        $file = $_FILES['photo'];
+        if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+            $this->redirect('admin_elections&eid=' . (int)($_POST['election_id'] ?? 0), 'آپلود تصویر ناموفق بود.', true);
+        }
+        if ((int)($file['size'] ?? 0) > 5 * 1024 * 1024) {
+            $this->redirect('admin_elections&eid=' . (int)($_POST['election_id'] ?? 0), 'حجم تصویر نباید بیشتر از ۵ مگابایت باشد.', true);
+        }
+        $mime = (new finfo(FILEINFO_MIME_TYPE))->file((string)$file['tmp_name']);
+        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        if (!isset($allowed[$mime]) || @getimagesize((string)$file['tmp_name']) === false) {
+            $this->redirect('admin_elections&eid=' . (int)($_POST['election_id'] ?? 0), 'فرمت تصویر مجاز نیست. فقط JPG، PNG یا WebP قابل قبول است.', true);
+        }
+        $dir = __DIR__ . '/../uploads/candidates';
+        if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) {
+            $this->redirect('admin_elections&eid=' . (int)($_POST['election_id'] ?? 0), 'پوشه ذخیره تصویر قابل ایجاد نیست.', true);
+        }
+        $name = bin2hex(random_bytes(16)) . '.' . $allowed[$mime];
+        if (!move_uploaded_file((string)$file['tmp_name'], $dir . '/' . $name)) {
+            $this->redirect('admin_elections&eid=' . (int)($_POST['election_id'] ?? 0), 'ذخیره تصویر ناموفق بود.', true);
+        }
+        return 'controllers/../uploads/candidates/' . $name;
+    }
+
     public function adminIndex(): void
     {
         $this->admin();
@@ -95,6 +121,7 @@ final class ElectionController
         if ($name === '') $this->redirect('admin_elections&eid=' . $eid, 'نام کاندیدا الزامی است.', true);
         $role = (string)($_POST['candidate_role'] ?? 'trustee');
         if (!in_array($role, ['trustee', 'auditor'], true)) $role = 'trustee';
+        $uploadedPhoto = $this->saveCandidatePhoto();
         $st = $this->pdo->prepare(
             'INSERT INTO election_candidates (election_id, candidate_role, full_name, mobile, national_id, bio, photo_url)
              VALUES (:eid, :role, :name, :mobile, :nid, :bio, :photo)'
@@ -106,7 +133,7 @@ final class ElectionController
             ':mobile' => trim((string)($_POST['mobile'] ?? '')) ?: null,
             ':nid' => trim((string)($_POST['national_id'] ?? '')) ?: null,
             ':bio' => trim((string)($_POST['bio'] ?? '')) ?: null,
-            ':photo' => trim((string)($_POST['photo_url'] ?? '')) ?: null,
+            ':photo' => $uploadedPhoto ?: (trim((string)($_POST['photo_url'] ?? '')) ?: null),
         ]);
         $this->redirect('admin_elections&eid=' . $eid, 'کاندیدا ثبت شد.');
     }

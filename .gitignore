@@ -9,4 +9,5 @@ res/
 DB Backup/
 config/db.php
 database/
+uploads/
 admin.secret.php

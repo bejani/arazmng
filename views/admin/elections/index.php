@@ -54,14 +54,14 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header fw-bold">افزودن کاندیدا</div>
                 <div class="card-body">
-                    <form method="post" action="index.php?page=admin_candidate_store" class="row g-3">
+                    <form method="post" action="index.php?page=admin_candidate_store" enctype="multipart/form-data" class="row g-3">
                         <?= csrf_field() ?><input type="hidden" name="election_id" value="<?= (int)$selected['id'] ?>">
                         <div class="col-md-5"><label class="form-label">نام و نام خانوادگی</label><input name="full_name" class="form-control" required></div>
                         <div class="col-md-3"><label class="form-label">نوع کاندیدا</label><select name="candidate_role" class="form-select"><option value="trustee">هیئت امنا</option><option value="auditor">بازرس</option></select></div>
                         <div class="col-md-3"><label class="form-label">موبایل</label><input name="mobile" class="form-control"></div>
                         <div class="col-md-3"><label class="form-label">کد ملی</label><input name="national_id" class="form-control"></div>
                         <div class="col-md-8"><label class="form-label">معرفی و سوابق</label><textarea name="bio" class="form-control" rows="2"></textarea></div>
-                        <div class="col-md-4"><label class="form-label">لینک تصویر (اختیاری)</label><input type="url" name="photo_url" class="form-control"></div>
+                        <div class="col-md-4"><label class="form-label">تصویر کاندیدا</label><input type="file" name="photo" class="form-control" accept="image/jpeg,image/png,image/webp"><div class="form-text">JPG، PNG یا WebP؛ حداکثر ۵ مگابایت</div></div>
                         <div class="col-12"><button class="btn btn-outline-primary">ثبت کاندیدا</button></div>
                     </form>
                 </div>
