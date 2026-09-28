@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../_helpers.php'; ?>
+<?php require_once __DIR__ . '/../_helpers.php'; ?>
 <div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="mb-1">انتخابات هیئت امنا</h2><p class="text-muted mb-0">ثبت رأی فقط یک‌بار برای هر ساکن امکان‌پذیر است.</p></div></div>
 <?php if (!empty($_SESSION['ok'])): ?><div class="alert alert-success"><?= h($_SESSION['ok']); unset($_SESSION['ok']); ?></div><?php endif; ?>
 <?php if (!empty($_SESSION['error'])): ?><div class="alert alert-danger"><?= h($_SESSION['error']); unset($_SESSION['error']); ?></div><?php endif; ?>
