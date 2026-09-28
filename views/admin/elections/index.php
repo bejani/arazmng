@@ -56,7 +56,8 @@
                 <div class="card-body">
                     <form method="post" action="index.php?page=admin_candidate_store" class="row g-3">
                         <?= csrf_field() ?><input type="hidden" name="election_id" value="<?= (int)$selected['id'] ?>">
-                        <div class="col-md-6"><label class="form-label">نام و نام خانوادگی</label><input name="full_name" class="form-control" required></div>
+                        <div class="col-md-5"><label class="form-label">نام و نام خانوادگی</label><input name="full_name" class="form-control" required></div>
+                        <div class="col-md-3"><label class="form-label">نوع کاندیدا</label><select name="candidate_role" class="form-select"><option value="trustee">هیئت امنا</option><option value="auditor">بازرس</option></select></div>
                         <div class="col-md-3"><label class="form-label">موبایل</label><input name="mobile" class="form-control"></div>
                         <div class="col-md-3"><label class="form-label">کد ملی</label><input name="national_id" class="form-control"></div>
                         <div class="col-md-8"><label class="form-label">معرفی و سوابق</label><textarea name="bio" class="form-control" rows="2"></textarea></div>
@@ -67,8 +68,8 @@
             </div>
             <div class="card shadow-sm">
                 <div class="card-header fw-bold">کاندیداها و نتایج</div>
-                <div class="table-responsive"><table class="table table-striped mb-0 align-middle"><thead><tr><th>کاندیدا</th><th>مشخصات</th><th class="text-center">رأی</th><th>عملیات</th></tr></thead><tbody>
-                <?php foreach ($candidates as $c): ?><tr><td><?php if ($c['photo_url']): ?><img src="<?= h($c['photo_url']) ?>" alt="" style="width:42px;height:42px;object-fit:cover;border-radius:50%" class="me-2"><?php endif; ?><strong><?= h($c['full_name']) ?></strong></td><td class="small">موبایل: <?= h($c['mobile'] ?: '-') ?><br>کد ملی: <?= h($c['national_id'] ?: '-') ?><br><?= nl2br(h($c['bio'] ?: '')) ?></td><td class="text-center fw-bold"><?= number_format((int)$c['votes_count']) ?></td><td><form method="post" action="index.php?page=admin_candidate_delete" onsubmit="return confirm('این کاندیدا حذف شود؟');"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int)$c['id'] ?>"><button class="btn btn-sm btn-outline-danger">حذف</button></form></td></tr><?php endforeach; ?>
+                <div class="table-responsive"><table class="table table-striped mb-0 align-middle"><thead><tr><th>کاندیدا</th><th>نوع</th><th>مشخصات</th><th class="text-center">رأی</th><th>عملیات</th></tr></thead><tbody>
+                <?php foreach ($candidates as $c): ?><tr><td><?php if ($c['photo_url']): ?><img src="<?= h($c['photo_url']) ?>" alt="" style="width:42px;height:42px;object-fit:cover;border-radius:50%" class="me-2"><?php endif; ?><strong><?= h($c['full_name']) ?></strong></td><td><span class="badge <?= ($c['candidate_role'] ?? 'trustee') === 'auditor' ? 'text-bg-warning' : 'text-bg-primary' ?>"><?= ($c['candidate_role'] ?? 'trustee') === 'auditor' ? 'بازرس' : 'هیئت امنا' ?></span></td><td class="small">موبایل: <?= h($c['mobile'] ?: '-') ?><br>کد ملی: <?= h($c['national_id'] ?: '-') ?><br><?= nl2br(h($c['bio'] ?: '')) ?></td><td class="text-center fw-bold"><?= number_format((int)$c['votes_count']) ?></td><td><form method="post" action="index.php?page=admin_candidate_delete" onsubmit="return confirm('این کاندیدا حذف شود؟');"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int)$c['id'] ?>"><button class="btn btn-sm btn-outline-danger">حذف</button></form></td></tr><?php endforeach; ?>
                 <?php if (!$candidates): ?><tr><td colspan="4" class="text-center text-muted">کاندیدایی ثبت نشده است.</td></tr><?php endif; ?></tbody></table></div>
             </div>
         <?php else: ?><div class="alert alert-info">برای شروع، یک انتخابات جدید ایجاد کنید.</div><?php endif; ?>

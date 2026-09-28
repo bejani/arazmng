@@ -93,12 +93,15 @@ final class ElectionController
         $name = trim((string)($_POST['full_name'] ?? ''));
         if (!$this->findElection($eid)) $this->redirect('admin_elections', 'انتخابات یافت نشد.', true);
         if ($name === '') $this->redirect('admin_elections&eid=' . $eid, 'نام کاندیدا الزامی است.', true);
+        $role = (string)($_POST['candidate_role'] ?? 'trustee');
+        if (!in_array($role, ['trustee', 'auditor'], true)) $role = 'trustee';
         $st = $this->pdo->prepare(
-            'INSERT INTO election_candidates (election_id, full_name, mobile, national_id, bio, photo_url)
-             VALUES (:eid, :name, :mobile, :nid, :bio, :photo)'
+            'INSERT INTO election_candidates (election_id, candidate_role, full_name, mobile, national_id, bio, photo_url)
+             VALUES (:eid, :role, :name, :mobile, :nid, :bio, :photo)'
         );
         $st->execute([
             ':eid' => $eid,
+            ':role' => $role,
             ':name' => $name,
             ':mobile' => trim((string)($_POST['mobile'] ?? '')) ?: null,
             ':nid' => trim((string)($_POST['national_id'] ?? '')) ?: null,
@@ -128,9 +131,12 @@ final class ElectionController
         $election = $this->findElection($eid);
         if (!$election) $this->redirect('admin_elections', 'انتخابات یافت نشد.', true);
         if ($action === 'open') {
-            $st = $this->pdo->prepare('SELECT COUNT(*) FROM election_candidates WHERE election_id = :eid AND is_active=1');
+            $st = $this->pdo->prepare('SELECT candidate_role, COUNT(*) AS total FROM election_candidates WHERE election_id = :eid AND is_active=1 GROUP BY candidate_role');
             $st->execute([':eid' => $eid]);
-            if ((int)$st->fetchColumn() < 1) $this->redirect('admin_elections&eid=' . $eid, 'برای شروع رأی‌گیری حداقل یک کاندیدا ثبت کنید.', true);
+            $counts = ['trustee' => 0, 'auditor' => 0];
+            foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $row) $counts[$row['candidate_role']] = (int)$row['total'];
+            if ($counts['trustee'] < 4) $this->redirect('admin_elections&eid=' . $eid, 'برای شروع رأی‌گیری حداقل ۴ کاندیدای هیئت امنا لازم است.', true);
+            if ($counts['auditor'] < 2) $this->redirect('admin_elections&eid=' . $eid, 'برای شروع رأی‌گیری حداقل ۲ کاندیدای بازرس لازم است.', true);
             $this->pdo->prepare('UPDATE elections SET status="open", results_published=0 WHERE id=:id')->execute([':id' => $eid]);
             $this->redirect('admin_elections&eid=' . $eid, 'رأی‌گیری باز شد.');
         }
@@ -157,6 +163,7 @@ final class ElectionController
         $election = $st->fetch(PDO::FETCH_ASSOC) ?: null;
         $candidates = [];
         $votedCandidateId = null;
+        $myVoteCount = 0;
         $canVote = false;
         if ($election) {
             $cs = $this->pdo->prepare(
@@ -168,8 +175,10 @@ final class ElectionController
             $candidates = $cs->fetchAll(PDO::FETCH_ASSOC);
             $vs = $this->pdo->prepare('SELECT candidate_id FROM election_votes WHERE election_id=:eid AND resident_id=:rid');
             $vs->execute([':eid' => (int)$election['id'], ':rid' => $rid]);
-            $votedCandidateId = $vs->fetchColumn();
-            $canVote = $election['status'] === 'open' && $votedCandidateId === false;
+            $myVotes = $vs->fetchAll(PDO::FETCH_COLUMN);
+            $myVoteCount = count($myVotes);
+            $votedCandidateId = $myVotes[0] ?? null;
+            $canVote = $election['status'] === 'open' && $myVoteCount === 0;
         }
         ob_start();
         $page_title = 'انتخابات هیئت امنا';
@@ -182,16 +191,33 @@ final class ElectionController
     {
         $rid = $this->portal();
         $eid = (int)($_POST['election_id'] ?? 0);
-        $cid = (int)($_POST['candidate_id'] ?? 0);
+        $candidateIds = array_values(array_unique(array_map('intval', (array)($_POST['candidate_ids'] ?? []))));
+        $auditorId = (int)($_POST['auditor_candidate_id'] ?? 0);
         $election = $this->findElection($eid);
         if (!$election || $election['status'] !== 'open') $this->redirect('portal_election', 'این رأی‌گیری فعال نیست.', true);
-        $st = $this->pdo->prepare('SELECT id FROM election_candidates WHERE id=:cid AND election_id=:eid AND is_active=1');
-        $st->execute([':cid' => $cid, ':eid' => $eid]);
-        if (!$st->fetchColumn()) $this->redirect('portal_election', 'کاندیدای انتخاب‌شده معتبر نیست.', true);
+        if (count($candidateIds) < 3) $this->redirect('portal_election', 'برای هیئت امنا باید حداقل ۳ کاندیدا انتخاب کنید.', true);
+        if ($auditorId <= 0) $this->redirect('portal_election', 'لطفاً یک بازرس انتخاب کنید.', true);
+        $allIds = array_values(array_unique(array_merge($candidateIds, [$auditorId])));
+        $marks = implode(',', array_fill(0, count($allIds), '?'));
+        $st = $this->pdo->prepare("SELECT id, candidate_role FROM election_candidates WHERE id IN ($marks) AND election_id=? AND is_active=1");
+        $st->execute([...$allIds, $eid]);
+        $valid = $st->fetchAll(PDO::FETCH_ASSOC);
+        if (count($valid) !== count($allIds)) $this->redirect('portal_election', 'یکی از انتخاب‌ها معتبر نیست.', true);
+        $roles = [];
+        foreach ($valid as $candidate) $roles[(int)$candidate['id']] = $candidate['candidate_role'];
+        foreach ($candidateIds as $candidateId) {
+            if (($roles[$candidateId] ?? null) !== 'trustee') $this->redirect('portal_election', 'در بخش هیئت امنا فقط کاندیداهای هیئت امنا را انتخاب کنید.', true);
+        }
+        if (($roles[$auditorId] ?? null) !== 'auditor') $this->redirect('portal_election', 'انتخاب بازرس معتبر نیست.', true);
         try {
+            $this->pdo->beginTransaction();
             $ins = $this->pdo->prepare('INSERT INTO election_votes (election_id, candidate_id, resident_id) VALUES (:eid,:cid,:rid)');
-            $ins->execute([':eid' => $eid, ':cid' => $cid, ':rid' => $rid]);
+            foreach (array_merge($candidateIds, [$auditorId]) as $candidateId) {
+                $ins->execute([':eid' => $eid, ':cid' => $candidateId, ':rid' => $rid]);
+            }
+            $this->pdo->commit();
         } catch (PDOException $e) {
+            if ($this->pdo->inTransaction()) $this->pdo->rollBack();
             if ((int)$e->errorInfo[1] === 1062) $this->redirect('portal_election', 'شما قبلاً در این انتخابات رأی داده‌اید.', true);
             throw $e;
         }
