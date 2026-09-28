@@ -45,6 +45,7 @@ require_once __DIR__ . '/controllers/PettyCashController.php';
 // Admin: Announcements & Tickets
 require_once __DIR__ . '/controllers/AdminAnnouncementsController.php';
 require_once __DIR__ . '/controllers/AdminTicketsController.php';
+require_once __DIR__ . '/controllers/ElectionController.php';
 
 // --- Auth / Session guards ---
 require_once __DIR__ . '/auth.php';
@@ -81,6 +82,12 @@ $adminPages = [
     'admin_ticket_reply',
     'admin_ticket_close',
     'admin_ticket_reopen',
+    // Trustee election
+    'admin_elections',
+    'admin_election_store',
+    'admin_candidate_store',
+    'admin_candidate_delete',
+    'admin_election_status',
 
     // Units
     'units',
@@ -215,6 +222,26 @@ switch ($page) {
         (new AdminTicketsController($pdo))->reopen();
         break;
 
+    // Trustee election
+    case 'admin_elections':
+        (new ElectionController($pdo))->adminIndex();
+        break;
+    case 'admin_election_store':
+        require_post();
+        (new ElectionController($pdo))->adminElectionStore();
+        break;
+    case 'admin_candidate_store':
+        require_post();
+        (new ElectionController($pdo))->adminCandidateStore();
+        break;
+    case 'admin_candidate_delete':
+        require_post();
+        (new ElectionController($pdo))->adminCandidateDelete();
+        break;
+    case 'admin_election_status':
+        require_post();
+        (new ElectionController($pdo))->adminStatus();
+        break;
     // Expense Categories
     case 'expense_categories':
         (new ExpenseCategoryController($pdo))->index();
@@ -420,6 +447,13 @@ switch ($page) {
 
     case 'portal_announcements':
         (new ResidentPortalController($pdo))->announcements();
+        break;
+    case 'portal_election':
+        (new ElectionController($pdo))->portalIndex();
+        break;
+    case 'portal_election_vote':
+        require_post();
+        (new ElectionController($pdo))->portalVote();
         break;
     case 'portal_tickets':
         (new ResidentPortalController($pdo))->tickets();

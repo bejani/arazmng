@@ -40,6 +40,7 @@
                         <li class="nav-item"><a class="nav-link" href="index.php?page=admin_announcements">📢 اعلان‌ها</a>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="index.php?page=admin_tickets">🎫 تیکت‌ها</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.php?page=admin_elections">انتخابات هیئت امنا</a></li>
                     <?php endif; ?>
                 </ul>
 

@@ -52,6 +52,8 @@
                                 href="index.php?page=portal_dashboard">داشبورد</a></li>
                         <li class="nav-item"><a class="nav-link <?= $isActive(['portal_announcements']) ?>"
                                 href="index.php?page=portal_announcements">اعلان‌ها</a></li>
+                        <li class="nav-item"><a class="nav-link <?= $isActive(['portal_election']) ?>"
+                                href="index.php?page=portal_election">انتخابات هیئت امنا</a></li>
                         <li class="nav-item"><a class="nav-link <?= $isActive(['portal_expenses']) ?>"
                                 href="index.php?page=portal_expenses">هزینه‌های عمومی</a></li>
                         <li class="nav-item">
@@ -121,6 +123,7 @@
                         <div class="small">اعلان‌ها</div>
                     </a>
 
+                    <a class="btn btn-link <?= $isActive(['portal_election']) ?>" href="index.php?page=portal_election" aria-label="انتخابات">🗳️<div class="small">انتخابات</div></a>
                     <a class="btn btn-link <?= $isActive(['portal_expenses']) ?>" href="index.php?page=portal_expenses"
                         aria-label="هزینه‌ها">📊
                         <div class="small">هزینه‌ها</div>
