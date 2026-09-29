@@ -62,8 +62,11 @@ class ResidentController
         $conds = [];
         $params = [];
         if ($q !== '') {
-            $conds[] = "(full_name LIKE :q OR mobile LIKE :q)";
-            $params[':q'] = '%' . $q . '%';
+            // در MySQL با emulate prepares خاموش، یک named parameter نمی‌تواند
+            // بیش از یک بار در همان query استفاده شود.
+            $conds[] = "(full_name LIKE :q_name OR mobile LIKE :q_mobile)";
+            $params[':q_name'] = '%' . $q . '%';
+            $params[':q_mobile'] = '%' . $q . '%';
         }
         if ($activeStr === '1' || $activeStr === '0') {
             $conds[] = "is_active = :a";
